@@ -8,7 +8,7 @@ const classes: Record<string, CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: `min(${LARGE_CARD_WIDTH}px,60%)`,
+    width: `min(${LARGE_CARD_WIDTH}px,70%)`,
     gap: "1rem",
     backgroundColor: "rgba(0, 0, 0, 0.69)",
     boxSizing: "border-box",
@@ -31,7 +31,13 @@ const classes: Record<string, CSSProperties> = {
     width: "100%",
     border: "1px solid gray",
   },
-  line: { display: "flex", alignItems: "center", gap: "0.5rem" },
+  line: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    fontSize: "12px",
+    flexWrap: "wrap",
+  },
 };
 
 export default function PokemonCardSpotlight(props: Pokemon) {
@@ -40,17 +46,10 @@ export default function PokemonCardSpotlight(props: Pokemon) {
       <img src={props.set_logo} style={{ width: "140px" }} />
       <img src={props.lg_img_url} style={classes.card} />
       <Paper style={classes.description}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           <div style={classes.line}>
-            <div style={{ fontSize: "16px" }}>
-              {props.name} - {props.rarity}
-            </div>
+            <div style={{ fontSize: "14px" }}>{props.name}</div>
+            <div style={{ color: "#ffccff" }}>{props.rarity}</div>
           </div>
           <div style={classes.line}>
             <img src={props.set_icon} style={{ height: "20px" }} />{" "}
