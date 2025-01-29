@@ -17,7 +17,7 @@ const classes: Record<string, CSSProperties> = {
     bottom: 0,
     right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
-    fontSize: "16px",
+    fontSize: "12px",
     display: "flex",
     alignItems: "center",
     gap: "4px",
