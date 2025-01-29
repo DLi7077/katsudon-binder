@@ -2,18 +2,14 @@ import axios from "axios";
 
 export async function getCards(query: pokemonTcgQuery): Promise<Pokemon[]> {
   const result: Pokemon[] = [];
-  console.log(queryToString(query));
-  let page = 1;
-  // let moreToQuery = true;
 
-  // while (moreToQuery) {
   await axios
     .get(`https://api.pokemontcg.io/v2/cards`, {
       params: {
         q: queryToString(query),
         orderBy: `set.releaseDate`,
         pageSize: 250,
-        page,
+        page: 1, // Todo: add api pagination when user reaches last page
       },
       headers: {
         "X-Api-Key": "25e2dc79-cf29-41cd-87d4-7ada4afa16b7",
@@ -22,10 +18,7 @@ export async function getCards(query: pokemonTcgQuery): Promise<Pokemon[]> {
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then((response: any) => {
-      const { data, count } = response.data;
-      // if (count === 0) moreToQuery = false;
-
-      // page++;
+      const { data } = response.data;
       result.push(
         ...data.map(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +37,6 @@ export async function getCards(query: pokemonTcgQuery): Promise<Pokemon[]> {
             sm_img_url: pokemon.images.small,
             lg_img_url: pokemon.images.large,
             price: pokemon.tcgplayer?.prices?.holofoil?.market ?? pokemon.cardmarket?.prices?.trendPrice,
-            // price: pokemon.tcgplayer?.prices?.holofoil?.market,
           })
         )
       );

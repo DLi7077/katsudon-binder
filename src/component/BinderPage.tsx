@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties } from "react";
 import PokemonCard from "./PokemonCard";
 
 export default function BinderPage(props: {

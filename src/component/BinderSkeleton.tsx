@@ -1,5 +1,5 @@
 import { Skeleton } from "@mui/material";
-import React, { CSSProperties } from "react";
+import  { CSSProperties } from "react";
 import { CARD_WIDTH } from "../constants";
 
 export default function BinderSkeleton(props: {

@@ -1,5 +1,5 @@
-import React, { CSSProperties, useState } from "react";
 import SellIcon from "@mui/icons-material/Sell";
+import { CSSProperties, useState } from "react";
 import { CARD_WIDTH } from "../constants";
 
 const classes: Record<string, CSSProperties> = {

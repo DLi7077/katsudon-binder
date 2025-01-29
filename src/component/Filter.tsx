@@ -1,5 +1,4 @@
 import { Autocomplete, Box, createFilterOptions, TextField } from "@mui/material";
-import React from "react";
 
 export default function Filter(props: {
   selected: string[];
@@ -24,7 +23,7 @@ export default function Filter(props: {
       value={props.selected}
       size="small"
       sx={{ minWidth: "120px" }}
-      onChange={(event, selected) => props.handleFilterChange(selected)}
+      onChange={(_, selected) => props.handleFilterChange(selected)}
       renderInput={(params) => <TextField {...params} variant="standard" label={props.label} />}
     />
   );

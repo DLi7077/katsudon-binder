@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Button, Modal, Pagination, TextField } from "@mui/material";
 import _ from "lodash";
 import { CSSProperties, useEffect, useState } from "react";
@@ -29,8 +30,8 @@ const classes: Record<string, CSSProperties> = {
 export default function Binder() {
   const [openModel, setOpenModel] = useState<boolean>(false);
   const [pages, setPages] = useState<Pokemon[][]>([]);
-  const [x, setX] = useState<number>(BINDER_ROWS);
-  const [y, setY] = useState<number>(BINDER_COLUMNS);
+  const [x] = useState<number>(BINDER_ROWS);
+  const [y] = useState<number>(BINDER_COLUMNS);
   const [page, setPage] = useState<number>(0);
   const [spotlightPokemon, setSpotlightPokemon] = useState<Pokemon | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
@@ -56,7 +57,7 @@ export default function Binder() {
 
   useEffect(() => {
     search();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function search() {

@@ -1,7 +1,7 @@
-import React, { CSSProperties } from "react";
-import { LARGE_CARD_WIDTH } from "../constants";
-import { Button, Paper } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Button, Paper } from "@mui/material";
+import { CSSProperties } from "react";
+import { LARGE_CARD_WIDTH } from "../constants";
 
 const classes: Record<string, CSSProperties> = {
   container: {
