@@ -10,7 +10,7 @@ const classes: Record<string, CSSProperties> = {
     alignItems: "center",
     width: `min(${LARGE_CARD_WIDTH}px,60%)`,
     gap: "1rem",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.69)",
     boxSizing: "border-box",
     padding: "1rem",
     paddingInline: "1.5rem",

@@ -36,6 +36,9 @@ export default function Binder() {
   const [spotlightPokemon, setSpotlightPokemon] = useState<Pokemon | null>(null);
   const [isLoading, setLoading] = useState<boolean>(false);
 
+  // responsiveness
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   // filters
   const [rarities, setRarities] = useState<string[]>(JSON.parse(localStorage.getItem("rarities") ?? "[]"));
   const [sets, setSets] = useState<string[]>(JSON.parse(localStorage.getItem("sets") ?? "[]"));
@@ -56,7 +59,11 @@ export default function Binder() {
   };
 
   useEffect(() => {
+    // search on page load
     search();
+
+    // update window size on change
+    window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -74,7 +81,6 @@ export default function Binder() {
     setLoading(true);
 
     getCards(query).then((pokemonList) => {
-      console.log(_.chunk(pokemonList, x * y));
       setPages(_.chunk(pokemonList, x * y));
       setTimeout(() => {
         setLoading(false);
@@ -90,7 +96,8 @@ export default function Binder() {
 
   const handleModelClose = () => setOpenModel(false);
 
-  const isSmallScreen = window.innerWidth < 1000;
+  const isSmallScreen = windowWidth < 1111;
+  const noData = !isLoading && pages.length === 0;
   const pagesOnScreen = isSmallScreen ? 1 : 2;
   return (
     <>
@@ -101,9 +108,10 @@ export default function Binder() {
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-            gap: "2rem",
+            columnGap: "2rem",
             alignItems: "flex-end",
             width: "100%",
+            flexWrap: "wrap",
           }}
         >
           <Filter options={RARITIES} selected={rarities} handleFilterChange={handleRarityChange} label={"Rarities"} />
@@ -122,7 +130,7 @@ export default function Binder() {
             style={{ width: "120px" }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCardName(event.target.value)}
           />
-          <Button variant="outlined" type="submit" onClick={search}>
+          <Button variant="outlined" type="submit" onClick={search} style={{ marginTop: "1rem" }}>
             Search
           </Button>
         </Box>
@@ -136,7 +144,7 @@ export default function Binder() {
             borderRadius: "24px",
           }}
         >
-          {!isLoading && (
+          {!isLoading && !noData && (
             <Pagination
               count={Math.ceil(pages.length / (isSmallScreen ? 1 : 2))}
               onChange={(_, value) => setPage(value - 1)}
@@ -144,9 +152,10 @@ export default function Binder() {
             />
           )}
         </div>
+        <div>{noData && <span>No cards found</span>}</div>
         <div style={classes.widePageContainer}>
           {(isLoading || pages.length === 0) && (
-            <BinderSkeleton pageStyle={pageStyle} rows={x} columns={y} noData={!isLoading && pages.length === 0} />
+            <BinderSkeleton pageStyle={pageStyle} rows={x} columns={y} noData={noData} isSmallScreen={isSmallScreen} />
           )}
           {!isLoading &&
             pages

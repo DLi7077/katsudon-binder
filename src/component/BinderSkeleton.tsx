@@ -1,5 +1,5 @@
 import { Skeleton } from "@mui/material";
-import  { CSSProperties } from "react";
+import { CSSProperties } from "react";
 import { CARD_WIDTH } from "../constants";
 
 export default function BinderSkeleton(props: {
@@ -7,8 +7,8 @@ export default function BinderSkeleton(props: {
   rows: number;
   columns: number;
   noData: boolean;
+  isSmallScreen: boolean;
 }) {
-  console.log(props.noData);
   function Page() {
     return (
       <div style={props.pageStyle}>
@@ -16,8 +16,8 @@ export default function BinderSkeleton(props: {
           <Skeleton
             variant="rectangular"
             animation={props.noData ? false : "wave"}
-            width={CARD_WIDTH}
-            height={(CARD_WIDTH * 7) / 5}
+            width={`min(${CARD_WIDTH}px, 25vw)`}
+            height={`min(${(CARD_WIDTH * 7) / 5}px, 35vw)`}
           />
         )}
       </div>
@@ -26,7 +26,7 @@ export default function BinderSkeleton(props: {
   return (
     <>
       <Page />
-      <Page />
+      {!props.isSmallScreen && <Page />}
     </>
   );
 }

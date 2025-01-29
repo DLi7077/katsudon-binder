@@ -6,11 +6,11 @@ const classes: Record<string, CSSProperties> = {
   card: {
     // aspect ratio: 250 x 350
     boxSizing: "border-box",
-    width: window.innerWidth < 1000 ? `200px` : `${CARD_WIDTH}px`,
+    width: `min(${CARD_WIDTH}px, 25vw)`,
     aspectRatio: "5/7",
     borderRadius: "9px",
     display: "block",
-    boxShadow: '1px 1px 1px 1px rgba(0,0,0,0.5)'
+    boxShadow: "1px 1px 1px 1px rgba(0,0,0,0.5)",
   },
   priceTag: {
     position: "absolute",

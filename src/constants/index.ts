@@ -1,6 +1,6 @@
 export const BINDER_COLUMNS = 3;
 export const BINDER_ROWS = 3;
-export const CARD_WIDTH = 180;
+export const CARD_WIDTH = 160;
 export const LARGE_CARD_WIDTH = 400;
 export const RARITIES = [
   "Illustration Rare",
