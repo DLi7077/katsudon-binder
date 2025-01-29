@@ -5,6 +5,9 @@ import App from "./App.tsx";
 import "./index.css";
 
 const theme = createTheme({
+  typography: {
+    fontSize: 12
+  },
   palette: {
     mode: "dark",
   },
