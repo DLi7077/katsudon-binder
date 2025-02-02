@@ -7,7 +7,7 @@ export async function getCards(query: pokemonTcgQuery): Promise<Pokemon[]> {
     .get(`https://api.pokemontcg.io/v2/cards`, {
       params: {
         q: queryToString(query),
-        orderBy: `set.releaseDate`,
+        orderBy: `-set.releaseDate,id`,
         pageSize: 250,
         page: 1, // Todo: add api pagination when user reaches last page
       },
