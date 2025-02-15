@@ -47,3 +47,11 @@ export const SETS = [
   "Surging Sparks",
   "Prismatic Evolutions",
 ].reverse();
+
+export const LOCALSTORAGE_KEYS = {
+  RARITIES: "rarity",
+  SETS: "sets",
+  ARTIST: "artist",
+  CARDNAME: "cardName",
+  OWNED: "owned",
+};

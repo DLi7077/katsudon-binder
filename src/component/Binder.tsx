@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Button, Modal, Pagination, TextField } from "@mui/material";
-import _ from "lodash";
+import { Modal } from "@mui/material";
 import { CSSProperties, useEffect, useState } from "react";
-import { getCards } from "../api/englishtcg";
-import { BINDER_COLUMNS, BINDER_ROWS, RARITIES, SETS } from "../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { setDisplay } from "../store/reducers/display";
 import BinderPage from "./BinderPage";
 import BinderSkeleton from "./BinderSkeleton";
-import Filter from "./Filter";
+import FilterContainer from "./FilterContainer";
+import PaginationContainer from "./PaginationContainer";
 import PokemonCardSpotlight from "./PokemonCardSpotlight";
 
 const classes: Record<string, CSSProperties> = {
@@ -28,30 +29,16 @@ const classes: Record<string, CSSProperties> = {
 };
 
 export default function Binder() {
-  const [openModel, setOpenModel] = useState<boolean>(false);
-  const [pages, setPages] = useState<Pokemon[][]>([]);
-  const [x] = useState<number>(BINDER_ROWS);
-  const [y] = useState<number>(BINDER_COLUMNS);
-  const [page, setPage] = useState<number>(0);
-  const [spotlightPokemon, setSpotlightPokemon] = useState<Pokemon | null>(null);
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const display = useSelector((state: RootState) => state.display);
+  const dispatch = useDispatch();
 
   // responsiveness
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  // filters
-  const [rarities, setRarities] = useState<string[]>(JSON.parse(localStorage.getItem("rarities") ?? "[]"));
-  const [sets, setSets] = useState<string[]>(JSON.parse(localStorage.getItem("sets") ?? "[]"));
-  const [artist, setArtist] = useState<string>(localStorage.getItem("artist") ?? "");
-  const [cardName, setCardName] = useState<string>(localStorage.getItem("card name") ?? "");
-
-  const handleRarityChange = (updated: string[]) => setRarities(updated);
-  const handleSetChange = (updated: string[]) => setSets(updated);
+  const [openModel, setOpenModel] = useState<boolean>(false);
 
   const pageStyle: CSSProperties = {
     display: "grid",
-    gridTemplateRows: `repeat(${y},1fr)`,
-    gridTemplateColumns: `repeat(${x},1fr)`,
+    gridTemplateRows: `repeat(${display.rows},1fr)`,
+    gridTemplateColumns: `repeat(${display.columns},1fr)`,
     gap: "1rem",
     padding: "1rem",
     paddingInline: "2rem",
@@ -59,123 +46,55 @@ export default function Binder() {
   };
 
   useEffect(() => {
-    // search on page load
-    search();
-
     // update window size on change
-    window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
+    window.addEventListener("resize", () => dispatch(setDisplay({ isSmallScreen: window.innerWidth < 1111 })));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function search() {
-    localStorage.setItem("rarities", JSON.stringify(rarities));
-    localStorage.setItem("sets", JSON.stringify(sets));
-    localStorage.setItem("artist", artist);
-    localStorage.setItem("card name", cardName);
-    const query: pokemonTcgQuery = {
-      name: cardName,
-      rarity: rarities,
-      setName: sets,
-      artist: artist,
-    };
-    setLoading(true);
-
-    getCards(query).then((pokemonList) => {
-      setPages(_.chunk(pokemonList, x * y));
-      setTimeout(() => {
-        setLoading(false);
-        setPage(0);
-      }, 300);
-    });
-  }
-
-  function changeSpotlightPokemon(pokemon: Pokemon): void {
-    setSpotlightPokemon(pokemon);
+  function changeSpotlightPokemon(spotlightPokemon: Pokemon): void {
+    dispatch(setDisplay({ spotlightPokemon }));
     setOpenModel(true);
   }
 
   const handleModelClose = () => setOpenModel(false);
 
-  const isSmallScreen = windowWidth < 1111;
-  const noData = !isLoading && pages.length === 0;
-  const pagesOnScreen = isSmallScreen ? 1 : 2;
+  const noData = !display.isLoading && display.pages.length === 0;
+  const pagesOnScreen = display.isSmallScreen ? 1 : 2;
   return (
     <>
       <div style={classes.container}>
-        <Box
-          component={"form"}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            columnGap: "2rem",
-            alignItems: "flex-end",
-            width: "100%",
-            flexWrap: "wrap",
-          }}
-        >
-          <Filter options={RARITIES} selected={rarities} handleFilterChange={handleRarityChange} label={"Rarities"} />
-          <Filter options={SETS} selected={sets} handleFilterChange={handleSetChange} label={"Sets"} />
-          <TextField
-            variant="standard"
-            label="Artist"
-            value={artist}
-            style={{ width: "120px" }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setArtist(event.target.value)}
-          />
-          <TextField
-            variant="standard"
-            label="Card Name"
-            value={cardName}
-            style={{ width: "120px" }}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setCardName(event.target.value)}
-          />
-          <Button variant="outlined" type="submit" onClick={search} style={{ marginTop: "1rem" }}>
-            Search
-          </Button>
-        </Box>
-        <div
-          style={{
-            position: "sticky",
-            bottom: 0,
-            backgroundColor: "rgb(56, 69, 77)",
-            width: "fit-content",
-            paddingInline: "1rem",
-            borderRadius: "24px",
-          }}
-        >
-          {!isLoading && !noData && (
-            <Pagination
-              count={Math.ceil(pages.length / (isSmallScreen ? 1 : 2))}
-              onChange={(_, value) => setPage(value - 1)}
-              style={{ borderBottom: "1px solid gray" }}
-            />
-          )}
-        </div>
+        <FilterContainer />
+        <PaginationContainer />
         <div>{noData && <span>No cards found</span>}</div>
         <div style={classes.widePageContainer}>
-          {(isLoading || pages.length === 0) && (
-            <BinderSkeleton pageStyle={pageStyle} rows={x} columns={y} noData={noData} isSmallScreen={isSmallScreen} />
+          {(display.isLoading || display.pages.length === 0) && (
+            <BinderSkeleton
+              pageStyle={pageStyle}
+              rows={display.rows}
+              columns={display.columns}
+              noData={noData}
+              isSmallScreen={display.isSmallScreen}
+            />
           )}
-          {!isLoading &&
-            pages
-              .slice(page * pagesOnScreen, page * pagesOnScreen + pagesOnScreen)
+          {!display.isLoading &&
+            display.pages
+              .slice(display.page * pagesOnScreen, display.page * pagesOnScreen + pagesOnScreen)
               .map((page) => (
                 <BinderPage
                   pageStyle={pageStyle}
-                  binderPage={{ page, x, y }}
+                  binderPage={{ page, x: display.rows, y: display.columns }}
                   changeSpotlightPokemon={changeSpotlightPokemon}
                 />
               ))}
         </div>
       </div>
-      {spotlightPokemon && (
+      {display.spotlightPokemon && (
         <Modal
           open={openModel}
           onClose={handleModelClose}
           style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
         >
-          <PokemonCardSpotlight {...spotlightPokemon} />
+          <PokemonCardSpotlight {...display.spotlightPokemon} />
         </Modal>
       )}
     </>

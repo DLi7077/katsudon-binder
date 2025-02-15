@@ -27,6 +27,7 @@ body {
   padding: 0;
   overflow: auto;
   width: 100%;
+  min-height: inherit;
   display: flex;
   justify-content: center;
   gap: 1rem;
