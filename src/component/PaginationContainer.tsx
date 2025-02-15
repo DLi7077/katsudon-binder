@@ -1,10 +1,12 @@
-import { Pagination } from "@mui/material";
+import { Pagination, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { setDisplay } from "../store/reducers/display";
+import { setFilters } from "../store/reducers/filters";
 
 export default function PaginationContainer() {
   const display = useSelector((state: RootState) => state.display);
+  const filter = useSelector((state: RootState) => state.filter);
   const dispatch = useDispatch();
 
   const noData = !display.isLoading && display.pages.length === 0;
@@ -13,17 +15,17 @@ export default function PaginationContainer() {
       style={{
         position: "fixed",
         bottom: "4rem",
-        backgroundColor: "rgb(47, 61, 69)",
         width: "fit-content",
         height: "fit-content",
         paddingInline: "1rem",
-        borderRadius: "24px",
         zIndex: 99,
-        border: "1px solid gray",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
       {!display.isLoading && !noData && (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", backgroundColor: "rgb(24, 40, 48)", borderRadius: "24px" }}>
           <Pagination
             count={Math.ceil(display.pages.length / (display.isSmallScreen ? 1 : 2))}
             onChange={(_, value) => dispatch(setDisplay({ page: value - 1 }))}
@@ -31,6 +33,19 @@ export default function PaginationContainer() {
           />
         </div>
       )}
+
+      <ToggleButtonGroup
+        value={filter.showOwned}
+        exclusive
+        onChange={(_, value) => {
+          dispatch(setFilters({ showOwned: value }));
+        }}
+        aria-label="text alignment"
+      >
+        {["All", "Owned", "Unowned"].map((condition) => (
+          <ToggleButton value={condition}>{condition}</ToggleButton>
+        ))}
+      </ToggleButtonGroup>
     </div>
   );
 }

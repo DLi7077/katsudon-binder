@@ -46,7 +46,18 @@ export default function FilterContainer() {
     dispatch(setDisplay({ isLoading: true }));
 
     getCards(query).then((pokemonList) => {
-      dispatch(setDisplay({ pages: _.chunk(pokemonList, display.rows * display.columns) }));
+      const filteredPokemonList =
+        filters.showOwned === "All"
+          ? pokemonList
+          : pokemonList.filter((pokemon) =>
+              filters.showOwned === "Owned" ? filters.owned.includes(pokemon.id) : !filters.owned.includes(pokemon.id)
+            );
+
+      dispatch(
+        setDisplay({
+          pages: _.chunk(filteredPokemonList, display.rows * display.columns),
+        })
+      );
       setTimeout(() => {
         dispatch(setDisplay({ isLoading: false }));
         dispatch(setDisplay({ page: 0 }));

@@ -7,7 +7,7 @@ export type FilterState = {
   artist: string;
   cardName: string;
   owned: string[];
-  showOwned: boolean;
+  showOwned: "All" | "Owned" | "Unowned";
 };
 
 function getObjectFromLS<T>(key: string, fallback: T): T {
@@ -22,8 +22,8 @@ const defaultState: FilterState = {
   sets: getObjectFromLS(LOCALSTORAGE_KEYS.SETS, []),
   artist: getFromLS(LOCALSTORAGE_KEYS.ARTIST, ""),
   cardName: getFromLS(LOCALSTORAGE_KEYS.CARDNAME, ""),
-  owned: [],
-  showOwned: false,
+  owned: getObjectFromLS(LOCALSTORAGE_KEYS.OWNED, []),
+  showOwned: "All",
 };
 
 export const filterSlice = createSlice({
@@ -33,12 +33,17 @@ export const filterSlice = createSlice({
     setFilters: (state, action) => {
       return { ...state, ...action.payload };
     },
-    updateSet: (state, action) => {
-      state.owned = action.payload;
+    removeFromOwned: (state, action) => {
+      state.owned = state.owned.filter((id) => id != action.payload);
+      localStorage.setItem(LOCALSTORAGE_KEYS.OWNED, JSON.stringify(state.owned));
+    },
+    addToOwned: (state, action) => {
+      state.owned = [...state.owned, action.payload];
+      localStorage.setItem(LOCALSTORAGE_KEYS.OWNED, JSON.stringify(state.owned));
     },
   },
 });
 
-export const { setFilters } = filterSlice.actions;
+export const { setFilters, removeFromOwned, addToOwned } = filterSlice.actions;
 
 export default filterSlice.reducer;
